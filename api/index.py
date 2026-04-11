@@ -84,11 +84,17 @@ async def extract_questions(background_tasks: BackgroundTasks, file: UploadFile 
             # Group lines into questions based on leading number
             questions = []
             current_q = None
+            expected_num = 1
             for line in lines:
-                if question_pattern.match(line["text"]):
+                match = question_pattern.match(line["text"])
+                found_num = None
+                if match:
+                    found_num = int(match.group(1))
+                if found_num and found_num == expected_num:
                     if current_q:
                         questions.append(current_q)
                     current_q = [line]
+                    expected_num += 1
                 elif current_q:
                     current_q.append(line)
             if current_q:
