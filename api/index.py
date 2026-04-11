@@ -50,6 +50,7 @@ async def extract_questions(background_tasks: BackgroundTasks, file: UploadFile 
     base_dir = os.path.join("/tmp", session_id)
     output_folder = os.path.join(base_dir, "output")
     os.makedirs(output_folder, exist_ok=True)
+    expected_num = 1
     
     # Save uploaded PDF
     pdf_path = os.path.join(base_dir, file.filename)
@@ -84,7 +85,6 @@ async def extract_questions(background_tasks: BackgroundTasks, file: UploadFile 
             # Group lines into questions based on leading number
             questions = []
             current_q = None
-            expected_num = 1
             for line in lines:
                 match = question_pattern.match(line["text"])
                 found_num = None
