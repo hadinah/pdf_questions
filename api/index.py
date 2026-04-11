@@ -90,7 +90,7 @@ async def extract_questions(background_tasks: BackgroundTasks, file: UploadFile 
                 found_num = None
                 if match:
                     found_num = int(match.group(1))
-                if found_num and found_num == expected_num:
+                if found_num is not None and found_num == expected_num:
                     if current_q:
                         questions.append(current_q)
                     current_q = [line]
