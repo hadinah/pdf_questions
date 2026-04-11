@@ -57,7 +57,7 @@ async def extract_questions(background_tasks: BackgroundTasks, file: UploadFile 
         shutil.copyfileobj(file.file, buffer)
 
     doc = fitz.open(pdf_path)
-    question_pattern = re.compile(r'^\d+\.(?!\s*[A-D]\.)')
+    question_pattern = re.compile(r'^(\d+)\.')
     q_count = 0
 
     for page in doc:
