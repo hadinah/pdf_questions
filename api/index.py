@@ -62,7 +62,7 @@ async def extract_questions(background_tasks: BackgroundTasks, file: UploadFile 
 
     doc = fitz.open(pdf_path)
     question_pattern = re.compile(r'^(\d+)\.')
-    option_pattern = re.compile(r'^[A-D]\)')
+    option_pattern = re.compile(r'^\(?[A-D]\)')
     q_count = 0
 
     for page in doc:
@@ -96,7 +96,7 @@ async def extract_questions(background_tasks: BackgroundTasks, file: UploadFile 
                     found_num = int(match.group(1))
                 elif option_pattern.match(line["text"]):
                     option_seen = True
-                if ((found_num is not None and found_num == expected_num) or not in_order) and option_seen:
+                if (found_num is not None and (found_num == expected_num or not in_order)) and option_seen:
                     if current_q:
                         questions.append(current_q)
                     current_q = [line]
