@@ -46,7 +46,7 @@ def cleanup(path: str):
         shutil.rmtree(path)
 
 @app.post("/api/extract")
-async def extract_questions(background_tasks: BackgroundTasks, file: UploadFile = File(...), in_order: bool = Form(...)):
+async def extract_questions(background_tasks: BackgroundTasks, file: UploadFile = File(...), in_order: bool = Form(False)):
     # Create a unique session ID in /tmp/
     session_id = str(uuid.uuid4())
     base_dir = os.path.join("/tmp", session_id)
