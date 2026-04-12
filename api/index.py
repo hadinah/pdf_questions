@@ -51,6 +51,7 @@ async def extract_questions(background_tasks: BackgroundTasks, file: UploadFile 
     output_folder = os.path.join(base_dir, "output")
     os.makedirs(output_folder, exist_ok=True)
     expected_num = 1
+    option_seen = True
     
     # Save uploaded PDF
     pdf_path = os.path.join(base_dir, file.filename)
@@ -59,6 +60,7 @@ async def extract_questions(background_tasks: BackgroundTasks, file: UploadFile 
 
     doc = fitz.open(pdf_path)
     question_pattern = re.compile(r'^(\d+)\.')
+    option_pattern = re.compile(r'^[A-D]\)')
     q_count = 0
 
     for page in doc:
@@ -90,11 +92,14 @@ async def extract_questions(background_tasks: BackgroundTasks, file: UploadFile 
                 found_num = None
                 if match:
                     found_num = int(match.group(1))
-                if found_num is not None and found_num == expected_num:
+                elif option_pattern.match(line["text"]):
+                    option_seen = True
+                if found_num is not None and found_num == expected_num and option_seen:
                     if current_q:
                         questions.append(current_q)
                     current_q = [line]
                     expected_num += 1
+                    option_seen = False
                 elif current_q:
                     current_q.append(line)
             if current_q:
