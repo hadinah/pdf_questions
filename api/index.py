@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, File, BackgroundTasks
+from fastapi import FastAPI, UploadFile, File, BackgroundTasks, Form
 from fastapi.responses import FileResponse, HTMLResponse
 import fitz  # PyMuPDF
 import re
@@ -31,6 +31,8 @@ async def main():
                 <p>Upload a 2-column PDF to extract numbered questions as images.</p>
                 <form action="/api/extract" enctype="multipart/form-data" method="post">
                     <input name="file" type="file" accept=".pdf" required><br>
+                    <label>Questions in order check:</label>
+                    <input type="checkbox" name="in_order" checked><br>
                     <button type="submit">Extract Questions (ZIP)</button>
                 </form>
             </div>
@@ -44,7 +46,7 @@ def cleanup(path: str):
         shutil.rmtree(path)
 
 @app.post("/api/extract")
-async def extract_questions(background_tasks: BackgroundTasks, file: UploadFile = File(...)):
+async def extract_questions(background_tasks: BackgroundTasks, file: UploadFile = File(...), in_order: bool = Form(True)):
     # Create a unique session ID in /tmp/
     session_id = str(uuid.uuid4())
     base_dir = os.path.join("/tmp", session_id)
@@ -94,7 +96,7 @@ async def extract_questions(background_tasks: BackgroundTasks, file: UploadFile 
                     found_num = int(match.group(1))
                 elif option_pattern.match(line["text"]):
                     option_seen = True
-                if found_num is not None and found_num == expected_num and option_seen:
+                if ((found_num is not None and found_num == expected_num) or not in_order) and option_seen:
                     if current_q:
                         questions.append(current_q)
                     current_q = [line]
