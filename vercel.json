@@ -3,11 +3,11 @@
   "rewrites": [
     {
       "source": "/favicon.ico",
-      "destination": "/public/favicon.ico"
+      "destination": "public/favicon.ico"
     },
     {
       "source": "/(.*)",
-      "destination": "/api/index.py"
+      "destination": "api/index.py"
     }
   ]
 }
