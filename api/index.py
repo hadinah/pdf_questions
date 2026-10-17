@@ -139,9 +139,6 @@ async def extract_questions(background_tasks: BackgroundTasks, file: UploadFile 
     question_bank_pdf.close()
     doc.close()
 
-    # Return the path to the newly compiled single file
-    output_pdf_path
-
     # Schedule cleanup to run after the file is downloaded
     background_tasks.add_task(cleanup, base_dir)
 
