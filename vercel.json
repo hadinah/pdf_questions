@@ -3,11 +3,11 @@
   "rewrites": [
     {
       "source": "/favicon.ico",
-      "destination": "public/favicon.ico"
+      "destination": "/favicon.ico"
     },
     {
       "source": "/(.*)",
-      "destination": "api/index.py"
+      "destination": "/fastapi"
     }
   ]
 }
