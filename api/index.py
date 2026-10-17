@@ -125,7 +125,7 @@ async def extract_questions(background_tasks: BackgroundTasks, file: UploadFile 
                 #pix.save(os.path.join(output_folder, f"question_{q_count}.png"))
 
     # Save modified PDF
-    output_filename = f"{os.path.splitext(file.filename)[0]}_questions.zip"
+    output_filename = f"{os.path.splitext(file.filename)[0]}_questions.pdf"
     output_path = os.path.join(base_dir, output_filename)
     question_bank_pdf.save(
         output_path,
