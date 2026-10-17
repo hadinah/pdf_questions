@@ -1,5 +1,13 @@
 {
+  "version": 2,
   "rewrites": [
-    { "source": "/(.*)", "destination": "/api/index.py" }
+    {
+      "source": "/favicon.ico",
+      "destination": "/favicon.ico"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/fastapi"
+    }
   ]
 }

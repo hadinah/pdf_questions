@@ -9,15 +9,6 @@ import uuid
 
 app = FastAPI()
 
-@app.get("/favicon.ico", include_in_schema=False)
-async def favicon():
-    favicon_path = os.path.join(os.path.dirname(__file__), "..", "public", "favicon.ico")
-    
-    if os.path.exists(favicon_path):
-        return FileResponse(favicon_path)
-    # Fallback to an empty response so the browser doesn't throw a noisy 404 error
-    return HTMLResponse(status_code=204)
-
 # Simple UI for the root URL to avoid 404 errors
 @app.get("/", response_class=HTMLResponse)
 async def main():
@@ -26,7 +17,6 @@ async def main():
     <html>
         <head>
             <title>PDF Question Extractor</title>
-            <link rel="icon" type="image/x-icon" href="/favicon.ico">
             <style>
                 body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background-color: #f4f4f9; }
                 .card { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; }
