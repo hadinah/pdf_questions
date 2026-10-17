@@ -61,6 +61,7 @@ async def extract_questions(background_tasks: BackgroundTasks, file: UploadFile 
         shutil.copyfileobj(file.file, buffer)
 
     doc = fitz.open(pdf_path)
+    question_bank_pdf = fitz.open()
     question_pattern = re.compile(r'^(\d+)\.')
     option_pattern = re.compile(r'^\(?[A-D]\)')
     q_count = 0
@@ -115,22 +116,37 @@ async def extract_questions(background_tasks: BackgroundTasks, file: UploadFile 
                 crop_rect = fitz.Rect(0, y0, width, y1)
                 
                 # 2x scale for clarity
-                pix = page.get_pixmap(matrix=fitz.Matrix(2, 2), clip=crop_rect)
+                #pix = page.get_pixmap(matrix=fitz.Matrix(2, 2), clip=crop_rect)
                 q_count += 1
-                pix.save(os.path.join(output_folder, f"question_{q_count}.png"))
+                question_bank_pdf.insert_pdf(doc, from_page=page.number, to_page=page.number)
 
-    # Create ZIP
-    zip_filename = f"{os.path.splitext(file.filename)[0]}_questions.zip"
-    zip_path = os.path.join(base_dir, zip_filename)
-    with zipfile.ZipFile(zip_path, 'w') as zipf:
-        for f in sorted(os.listdir(output_folder)):
-            zipf.write(os.path.join(output_folder, f), arcname=f)
+                new_page = question_bank_pdf[-1]
+                new_page.set_cropbox(crop_rect)
+                #pix.save(os.path.join(output_folder, f"question_{q_count}.png"))
+
+    # Save modified PDF
+    output_filename = f"{os.path.splitext(file.filename)[0]}_questions.zip"
+    output_path = os.path.join(base_dir, output_filename)
+    question_bank_pdf.save(
+        output_path,
+        garbage=4,
+        deflate=True,
+        deflate_fonts=True,
+        use_objstms=1,
+        clean=True,
+        linear=False
+    )
+    question_bank_pdf.close()
+    doc.close()
+
+    # Return the path to the newly compiled single file
+    output_pdf_path
 
     # Schedule cleanup to run after the file is downloaded
     background_tasks.add_task(cleanup, base_dir)
 
     return FileResponse(
-        zip_path, 
-        media_type='application/zip', 
-        filename=zip_filename
+        output_path, 
+        media_type='application/pdf', 
+        filename=output_filename
     )
