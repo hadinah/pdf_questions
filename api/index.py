@@ -121,6 +121,14 @@ async def extract_questions(background_tasks: BackgroundTasks, file: UploadFile 
 
                 new_page = question_bank_pdf[-1]
                 new_page.set_cropbox(crop_rect)
+                labels = {}
+                for item in q:
+                    match = option_pattern.match(item["text"])
+                    if match:
+                        letter_match = re.search(r'[A-D]', match.group())
+                        if letter_match:
+                            letter = letter_match.group()
+                            labels[letter] = item
                 #pix.save(os.path.join(output_folder, f"question_{q_count}.png"))
 
     # Save modified PDF
