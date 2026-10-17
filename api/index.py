@@ -70,8 +70,7 @@ async def extract_questions(background_tasks: BackgroundTasks, file: UploadFile 
         width, height = page.rect.width, page.rect.height
         # Logic for 2-column layout
         columns = [
-            fitz.Rect(0, 0, width/2, height),
-            fitz.Rect(width/2, 0, width, height)
+            fitz.Rect(0, 0, width, height)
         ]
         
         for col in columns:
@@ -85,7 +84,7 @@ async def extract_questions(background_tasks: BackgroundTasks, file: UploadFile 
                             lines.append({"text": text, "bbox": line["bbox"]})
 
             # Sort lines top-to-bottom
-            lines.sort(key=lambda x: x["bbox"][1])
+            lines.sort(key=lambda x: x["bbox"][-1])
             
             # Group lines into questions based on leading number
             questions = []
